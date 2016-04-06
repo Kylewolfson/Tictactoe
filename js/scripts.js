@@ -9,9 +9,9 @@ function Square (playerMark, xcoordinate, ycoordinate, clickable) {
 var playerCounter = 0
 playerPicker = function() {
   if (playerCounter%2 === 0) {
-    return("playerX")
+    return("Player X")
   } else
-    return("playerO")
+    return("Player O")
   }
 
 
@@ -32,6 +32,7 @@ Board.prototype.reset = function() {
     for (var x = 1; x <= 3; x++) {
       var newSquare = new Square (false, x, y, true);
       newBoard.spaces.push(newSquare);
+      console.log(newSquare);
     }
   }
 };
@@ -72,20 +73,20 @@ Square.prototype.markO = function() {
 //User Interface
 $(function() {
   $('.background').click(function() {
-    // if (newBoard.spaces.clickable === true) {
-      var spaceLocation = $(this).attr("id");
+    var spaceLocation = $(this).attr("id");
+    var player = playerPicker();
+    if (newBoard.spaces[spaceLocation].clickable) {
+      newBoard.spaces[spaceLocation].clickable = false;
       $(this).removeClass("background");
       $(this).children("img").remove();
-      var player = playerPicker();
-      if (player === "playerX") {
-        newBoard.spaces[spaceLocation].playerMark = ('playerX');
+
+      if (player === "Player X") {
+        newBoard.spaces[spaceLocation].playerMark = ('Player X');
         $(this).append("<img src='img/red-x.png'>");
       } else {
-        newBoard.spaces[spaceLocation].playerMark = ('playerO');
+        newBoard.spaces[spaceLocation].playerMark = ('Player O');
         $(this).append("<img src='img/blue-circle.png'>");
       }
-
-      console.log(newBoard.spaces[spaceLocation].playerMark)
 
       playerCounter += 1
       if (newBoard.gameOver() === "Cats Game!") {
@@ -93,10 +94,18 @@ $(function() {
       } else if (newBoard.gameOver()) {
         alert(player + " wins!");
       }
-
-      console.log(newBoard.spaces[spaceLocation].playerMark)
-
-      console.log(newBoard.gameOver());
-    // }
+    };
   });
+
+  $('.btn').click(function() {
+    newBoard.reset();
+    for (var i = 0; i < 9; i++) {
+      $("#" + i).children("img").remove();
+      $("#" + i).append("<img src='img/background.gif'>")
+      $("#" + i).addClass("background");
+      playerCounter = 0;
+    }
+
+  });
+
 });

@@ -11,10 +11,27 @@
   text-decoration: underline;
 }*/
 
+html {
+  background-color: #FAC570;
+}
+
 .col-xs-2 {
-  background-color: black;
+  background-color: #FAC570;
+}
+
+.row {
+  padding-top: 20px;
+  background-color: #FAC570;
 }
 
 img {
   width: 100%;
+}
+
+.btn {
+  margin-top: 40px;
+}
+
+.col-sm-2 {
+  text-align: center;
 }
