@@ -11,7 +11,7 @@
   text-decoration: underline;
 }*/
 
-html {
+body {
   background-color: #FAC570;
 }
 
@@ -29,9 +29,18 @@ img {
 }
 
 .btn {
-  margin-top: 40px;
+  margin-top: 75px;
 }
 
 .col-sm-2 {
   text-align: center;
+}
+
+h1 {
+  margin-top: 80px;
+  text-align: center;
+  font-size: 150px;
+  font-family: fantasy;
+  color: #70A5FA;
+  font-weight: bolder;
 }
