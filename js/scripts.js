@@ -11,6 +11,7 @@ function Board () {
   this.spaces = [];
 }
 
+var aiLevel = "hard";
 var playerCounter = 0
 playerPicker = function() {
   if (playerCounter%2 === 0) {
@@ -33,6 +34,37 @@ Board.prototype.reset = function() {
 };
 
 newBoard.reset();
+
+// Board.prototype.checkBoard = function() {
+//   for (var i = 0; i < newBoard.spaces.length; i++) {
+//     for (var c = 0; c < winningArrays.length; c++) {
+//       if ()
+//         if ((newBoard.spaces[i] === winningArrays[c][0]) || (newBoard.spaces[i] === winningArrays[c][0]) || (newBoard.spaces[i] === winningArrays[c][0])) {
+//           if ()
+//           computerStrategy = winningArrays[i];
+//       }
+//     }
+//   }
+// }
+
+Board.prototype.canIWin = function() {
+  var winningArrays =[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  for(var i = 0; i < winningArrays.length; i++) {
+    var winningSpaces = 0;
+    var emptySpaces = 0;
+    space1 = winningArrays[i][0];
+    space2 = winningArrays[i][1];
+    space3 = winningArrays[i][2];
+    emptySpace = false;
+    if (newBoard.spaces[space1].playerMark === "Player O") {winningSpaces++;}
+    if (newBoard.spaces[space2].playerMark === "Player O") {winningSpaces++;}
+    if (newBoard.spaces[space3].playerMark === "Player O") {winningSpaces++;}
+    if (newBoard.spaces[space1].playerMark === false) {emptySpaces++; emptySpace = space1;}
+    if (newBoard.spaces[space2].playerMark === false) {emptySpaces++; emptySpace = space2;}
+    if (newBoard.spaces[space3].playerMark === false) {emptySpaces++; emptySpace = space3;}
+    if ((winningSpaces === 2) && (emptySpaces === 1)) {return emptySpace}
+  }
+}
 
 Board.prototype.gameOver = function() {
   var winningArrays =[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
@@ -88,19 +120,31 @@ $(function() {
       } else if (newBoard.gameOver()) {
         alert(player + " wins!");
       }
-      if ((playerCounter % 2 === 1) && (newBoard.gameOver() == false)){
+      if ((aiLevel) && (playerCounter % 2 === 1) && (newBoard.gameOver() == false)) {
         var randomPick = Math.floor((Math.random() * 9));
         while (newBoard.spaces[randomPick].clickable != true) {
           randomPick = Math.floor((Math.random() * 9));
         }
+        if ((aiLevel === "hard") && (playerCounter % 2 === 1) && (newBoard.gameOver() == false)) {
+            if (newBoard.canIWin()) {
+              randomPick = newBoard.canIWin();
+            }
+        }
         $('#' + randomPick).trigger("click");
       }
+
     };
   });
 
+  $('#easy').click(function() {
+    aiLevel = "easy";
+  });
 
+  $('#resetAI').click(function() {
+    aiLevel = false;
+  });
 
-  $('.btn').click(function() {
+  $('#reset').click(function() {
     newBoard.reset();
     for (var i = 0; i < 9; i++) {
       $("#" + i).children("img").remove();
@@ -108,6 +152,5 @@ $(function() {
       $("#" + i).addClass("background");
       playerCounter = 0;
     }
-
   });
 });
