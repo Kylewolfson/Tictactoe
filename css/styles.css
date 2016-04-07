@@ -1,8 +1,4 @@
-/*.container {
-  margin-top: 5%
-}
-
-.click:hover {
+/*.click:hover {
   cursor: pointer;
 }
 
@@ -39,7 +35,7 @@ img {
 h1 {
   margin-top: 80px;
   text-align: center;
-  font-size: 150px;
+  font-size: 120px;
   font-family: fantasy;
   color: #70A5FA;
   font-weight: bolder;

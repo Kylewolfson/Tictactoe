@@ -1,9 +1,14 @@
 //Business Logic
+
 function Square (playerMark, xcoordinate, ycoordinate, clickable) {
   this.playerMark = playerMark;
   this.xcoordinate = xcoordinate;
   this.ycoordinate = ycoordinate;
   this.clickable = clickable;
+}
+
+function Board () {
+  this.spaces = [];
 }
 
 var playerCounter = 0
@@ -14,61 +19,50 @@ playerPicker = function() {
     return("Player O")
   }
 
-
-function Board () {
-  this.spaces = [];
-}
 var newBoard = new Board();
 
-var xcoordinate = [1, 2, 3];
-var ycoordinate = [1, 2, 3];
-
-var board = new Board();
-
-//Pushes new Squares into array spaces with playerMark = false and both coordinates
+//pushes new Squares into array spaces with playerMark = false, both coordinates, & clickable = true
 Board.prototype.reset = function() {
   newBoard.spaces = [];
   for (var y = 1; y <= 3; y++) {
     for (var x = 1; x <= 3; x++) {
       var newSquare = new Square (false, x, y, true);
       newBoard.spaces.push(newSquare);
-      console.log(newSquare);
     }
   }
 };
 
+newBoard.reset();
+
 Board.prototype.gameOver = function() {
-  if ((newBoard.spaces[0].playerMark) && (newBoard.spaces[0].playerMark) === (newBoard.spaces[1].playerMark) && (newBoard.spaces[0].playerMark) === (newBoard.spaces[2].playerMark)) {
-    return true;
-  } else if ((newBoard.spaces[3].playerMark) && (newBoard.spaces[3].playerMark) === (newBoard.spaces[4].playerMark) && (newBoard.spaces[3].playerMark) === (newBoard.spaces[5].playerMark)) {
-    return true;
-  } else if ((newBoard.spaces[6].playerMark) && (newBoard.spaces[6].playerMark) === (newBoard.spaces[7].playerMark) && (newBoard.spaces[6].playerMark) === (newBoard.spaces[8].playerMark)) {
-    return true;
-  } else if ((newBoard.spaces[0].playerMark) && (newBoard.spaces[0].playerMark) === (newBoard.spaces[3].playerMark) && (newBoard.spaces[0].playerMark) === (newBoard.spaces[6].playerMark)) {
-    return true;
-  } else if ((newBoard.spaces[1].playerMark) && (newBoard.spaces[1].playerMark) === (newBoard.spaces[4].playerMark) && (newBoard.spaces[1].playerMark) === (newBoard.spaces[7].playerMark)) {
-    return true;
-  } else if ((newBoard.spaces[2].playerMark) && (newBoard.spaces[2].playerMark) === (newBoard.spaces[5].playerMark) && (newBoard.spaces[2].playerMark) === (newBoard.spaces[8].playerMark)) {
-    return true;
-  } else if ((newBoard.spaces[0].playerMark) && (newBoard.spaces[0].playerMark) === (newBoard.spaces[4].playerMark) && (newBoard.spaces[0].playerMark) === (newBoard.spaces[8].playerMark)) {
-    return true;
-  } else if ((newBoard.spaces[2].playerMark) && (newBoard.spaces[2].playerMark) === (newBoard.spaces[4].playerMark) && (newBoard.spaces[2].playerMark) === (newBoard.spaces[6].playerMark)) {
-    return true;
-  } else if (playerCounter === 9) {
+  var winningArrays =[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  for(var i = 0; i < winningArrays.length; i++) {
+    space1 = winningArrays[i][0];
+    space2 = winningArrays[i][1];
+    space3 = winningArrays[i][2];
+    if ((newBoard.spaces[space1].playerMark) && (newBoard.spaces[space1].playerMark) === (newBoard.spaces[space2].playerMark) && (newBoard.spaces[space1].playerMark) === (newBoard.spaces[space3].playerMark)) {
+      return true;
+    }
+  }
+  if (playerCounter === 9) {
     return "Cats Game!";
   } else {
     return false;
   }
 }
 
-newBoard.reset();
 
-Square.prototype.markX = function() {
-  this.boardSquare
-}
 
-Square.prototype.markO = function() {
-}
+// var xcoordinate = [1, 2, 3];
+// var ycoordinate = [1, 2, 3];
+
+// Square.prototype.markX = function() {
+//   this.boardSquare
+// }
+
+// Square.prototype.markO = function() {
+// }
+
 
 //User Interface
 $(function() {
@@ -87,15 +81,24 @@ $(function() {
         newBoard.spaces[spaceLocation].playerMark = ('Player O');
         $(this).append("<img src='img/blue-circle.png'>");
       }
-
       playerCounter += 1
+
       if (newBoard.gameOver() === "Cats Game!") {
         alert("Cat's Game!");
       } else if (newBoard.gameOver()) {
         alert(player + " wins!");
       }
+      if ((playerCounter % 2 === 1) && (newBoard.gameOver() == false)){
+        var randomPick = Math.floor((Math.random() * 9));
+        while (newBoard.spaces[randomPick].clickable != true) {
+          randomPick = Math.floor((Math.random() * 9));
+        }
+        $('#' + randomPick).trigger("click");
+      }
     };
   });
+
+
 
   $('.btn').click(function() {
     newBoard.reset();
@@ -107,5 +110,4 @@ $(function() {
     }
 
   });
-
 });
