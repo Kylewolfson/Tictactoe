@@ -11,10 +11,17 @@ function Board () {
   this.spaces = [];
 }
 
-var aiLevel = "hard";
-var playerCounter = 0
+function Game (aiLevel, turnCounter, spaceLocation, player) {
+var aiLevel = aiLevel;
+var turnCounter = turnCounter;
+var spaceLocation = spaceLocation;
+var player = player;
+}
+
+var newGame = new Game(false, 0);
+
 playerPicker = function() {
-  if (playerCounter%2 === 0) {
+  if (newGame.turnCounter % 2 === 0) {
     return("Player X")
   } else
     return("Player O")
@@ -35,32 +42,21 @@ Board.prototype.reset = function() {
 
 newBoard.reset();
 
-// Board.prototype.checkBoard = function() {
-//   for (var i = 0; i < newBoard.spaces.length; i++) {
-//     for (var c = 0; c < winningArrays.length; c++) {
-//       if ()
-//         if ((newBoard.spaces[i] === winningArrays[c][0]) || (newBoard.spaces[i] === winningArrays[c][0]) || (newBoard.spaces[i] === winningArrays[c][0])) {
-//           if ()
-//           computerStrategy = winningArrays[i];
-//       }
-//     }
-//   }
-// }
-
 Board.prototype.bestAvailable = function() {
   if (newBoard.spaces[4].playerMark === false) {return 4}
   if (newBoard.spaces[0].playerMark === false) {return 0}
   if (newBoard.spaces[2].playerMark === false) {return 2}
   if (newBoard.spaces[6].playerMark === false) {return 6}
   if (newBoard.spaces[8].playerMark === false) {return 8}
-
 }
+
 Board.prototype.preventFork = function() {
-  if (playerCounter === 3) {
+  if (newGame.turnCounter === 3) {
     if (newBoard.spaces[1].playerMark === false) {return 1}
     if (newBoard.spaces[3].playerMark === false) {return 3}
   }
 }
+
 Board.prototype.canIWin = function() {
   var winningArrays =[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
   for(var i = 0; i < winningArrays.length; i++) {
@@ -76,7 +72,7 @@ Board.prototype.canIWin = function() {
     if (newBoard.spaces[space1].playerMark === false) {emptySpaces++; emptySpace = space1;}
     if (newBoard.spaces[space2].playerMark === false) {emptySpaces++; emptySpace = space2;}
     if (newBoard.spaces[space3].playerMark === false) {emptySpaces++; emptySpace = space3;}
-    if ((winningSpaces === 2) && (emptySpaces === 1)) {return emptySpace}
+    if ((winningSpaces === 2) && (emptySpaces === 1)) {return emptySpace+1}
   }
 }
 
@@ -95,7 +91,7 @@ Board.prototype.canIBlock = function() {
     if (newBoard.spaces[space1].playerMark === false) {emptySpaces++; emptySpace = space1;}
     if (newBoard.spaces[space2].playerMark === false) {emptySpaces++; emptySpace = space2;}
     if (newBoard.spaces[space3].playerMark === false) {emptySpaces++; emptySpace = space3;}
-    if ((winningSpaces === 2) && (emptySpaces === 1)) {return emptySpace}
+    if ((winningSpaces === 2) && (emptySpaces === 1)) {return emptySpace+1}
   }
 }
 
@@ -109,67 +105,53 @@ Board.prototype.gameOver = function() {
       return true;
     }
   }
-  if (playerCounter === 9) {
+  if (newGame.turnCounter === 9) {
     return "Cats Game!";
   } else {
     return false;
   }
 }
 
-
-
-// var xcoordinate = [1, 2, 3];
-// var ycoordinate = [1, 2, 3];
-
-// Square.prototype.markX = function() {
-//   this.boardSquare
-// }
-
-// Square.prototype.markO = function() {
-// }
-
-
 //User Interface
 $(function() {
   $('.background').click(function() {
-    var spaceLocation = $(this).attr("id");
-    var player = playerPicker();
-    if (newBoard.spaces[spaceLocation].clickable) {
-      newBoard.spaces[spaceLocation].clickable = false;
+    newGame.spaceLocation = $(this).attr("id");
+    newGame.player = playerPicker();
+    if (newBoard.spaces[newGame.spaceLocation].clickable) {
+      newBoard.spaces[newGame.spaceLocation].clickable = false;
       $(this).removeClass("background");
       $(this).children("img").remove();
 
-      if (player === "Player X") {
-        newBoard.spaces[spaceLocation].playerMark = ('Player X');
+      if (newGame.player === "Player X") {
+        newBoard.spaces[newGame.spaceLocation].playerMark = ('Player X');
         $(this).append("<img src='img/red-x.png'>");
       } else {
-        newBoard.spaces[spaceLocation].playerMark = ('Player O');
+        newBoard.spaces[newGame.spaceLocation].playerMark = ('Player O');
         $(this).append("<img src='img/blue-circle.png'>");
       }
-      playerCounter += 1
+      newGame.turnCounter += 1
 
       if (newBoard.gameOver() === "Cats Game!") {
         alert("Cat's Game!");
       } else if (newBoard.gameOver()) {
-        alert(player + " wins!");
+        alert(newGame.player + " wins!");
       }
-      if ((aiLevel) && (playerCounter % 2 === 1) && (newBoard.gameOver() == false)) {
+      if ((newGame.aiLevel) && (newGame.turnCounter % 2 === 1) && (newBoard.gameOver() == false)) {
         var randomPick = Math.floor((Math.random() * 9));
         while (newBoard.spaces[randomPick].clickable != true) {
           randomPick = Math.floor((Math.random() * 9));
         }
-        if ((aiLevel === "hard") && (playerCounter % 2 === 1) && (newBoard.gameOver() == false)) {
-          debugger;
+        if ((newGame.aiLevel === "hard") && (newGame.turnCounter % 2 === 1) && (newBoard.gameOver() == false)) {
             randomPick = newBoard.bestAvailable();
           if (newBoard.preventFork()) {
             randomPick = newBoard.preventFork();
           }
           if (newBoard.canIBlock()) {
-            randomPick = newBoard.canIBlock();
+            randomPick = newBoard.canIBlock()-1;
           }
 
             if (newBoard.canIWin()) {
-              randomPick = newBoard.canIWin();
+              randomPick = newBoard.canIWin()-1;
             }
         }
         $('#' + randomPick).trigger("click");
@@ -179,11 +161,15 @@ $(function() {
   });
 
   $('#easy').click(function() {
-    aiLevel = "easy";
+    newGame.aiLevel = "easy";
+  });
+
+  $('#hard').click(function() {
+    newGame.aiLevel = "hard";
   });
 
   $('#resetAI').click(function() {
-    aiLevel = false;
+    newGame.aiLevel = false;
   });
 
   $('#reset').click(function() {
@@ -192,7 +178,7 @@ $(function() {
       $("#" + i).children("img").remove();
       $("#" + i).append("<img src='img/background.gif'>")
       $("#" + i).addClass("background");
-      playerCounter = 0;
+      newGame.turnCounter = 0;
     }
   });
 });
